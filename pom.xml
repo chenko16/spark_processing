@@ -12,6 +12,7 @@
         <module>dstream</module>
         <module>structured_stream</module>
         <module>benchmark</module>
+        <module>scaling_calculation</module>
     </modules>
 
     <build>

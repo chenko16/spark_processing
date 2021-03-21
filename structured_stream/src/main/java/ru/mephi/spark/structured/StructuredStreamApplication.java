@@ -64,13 +64,18 @@ public class StructuredStreamApplication {
 
 
         //Агрегируем данные по столбцу time и преобразуем результат к исходной структуре
+
+
         Dataset<Row> windowDataset = metricDataset
                 .withWatermark("time", String.format("%s minutes", windowUpdatePeriod))
-                .groupBy(col("id"), window(col("time"),String.format("%s minutes", windowLength), String.format("%s minutes", windowUpdatePeriod)))
+                .groupBy(col("id"), window(col("time"),String.format("%s minutes", windowLength),
+                        String.format("%s minutes", windowUpdatePeriod)))
                 .agg(avg("value").as("value"))
                 .withColumn("time", col("window.start"))
                 .drop("window")
                 .select(col("id"), col("time"), col("value"));
+
+
 
         try {
             writeToKafka(windowDataset, datasetSchema);

@@ -1,6 +1,5 @@
-package ru.mephi.spark.rdd.util;
+package ru.mephi.spark.banchmark.util;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -31,29 +30,5 @@ public class DateUtil {
         Date result = calendar.getTime();
 
         return result;
-    }
-
-    public static Date getWindowStartMinutes(Calendar now, Integer window) {
-        Calendar calendar = (Calendar) now.clone();
-        calendar.add(Calendar.MINUTE, -window);
-        return calendar.getTime();
-    }
-
-    public static Date getWindowEndMinutes(Calendar now, Integer window) {
-        Calendar calendar = (Calendar) now.clone();
-        calendar.add(Calendar.MINUTE, window);
-        return calendar.getTime();
-    }
-
-    public static Date getWindowStartSeconds(Calendar now, Integer window) {
-        Calendar calendar = (Calendar) now.clone();
-        calendar.add(Calendar.SECOND, -window);
-        return calendar.getTime();
-    }
-
-    public static Date getWindowEndSeconds(Calendar now, Integer window) {
-        Calendar calendar = (Calendar) now.clone();
-        calendar.add(Calendar.SECOND, window);
-        return calendar.getTime();
     }
 }

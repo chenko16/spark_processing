@@ -74,8 +74,10 @@ public class DStreamApplication {
                     metric.setTime(DateUtil.roundMinutes(metric.getTime(), windowUpdatePeriod));
                     return metric;
                 })
-                .mapToPair(metric -> new Tuple2<>(new Tuple2<>(metric.getId(), metric.getTime()), new Tuple2<>(metric.getValue(), 1)))
-                .reduceByKeyAndWindow((x, y) -> new Tuple2<>(x._1 + y._1, x._2 + y._2), Durations.minutes(windowLength), Durations.minutes(windowUpdatePeriod))
+                .mapToPair(metric -> new Tuple2<>(new Tuple2<>(metric.getId(), metric.getTime()),
+                        new Tuple2<>(metric.getValue(), 1)))
+                .reduceByKeyAndWindow((x, y) -> new Tuple2<>(x._1 + y._1, x._2 + y._2),
+                        Durations.minutes(windowLength), Durations.minutes(windowUpdatePeriod))
                 .mapValues(value -> value._1 / value._2)
                 .map(pair -> new MetricDto(pair._1._1, pair._1._2, pair._2));
 
