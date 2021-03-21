@@ -19,8 +19,7 @@ public class KubernetesManagingServiceImpl implements KubernetesManagingService 
     @SneakyThrows
     @Override
     public List<V1Pod> getPodList() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("kube.yaml").getFile());
+        File file = new File(getClass().getResource("kube.yaml").getFile());
         FileReader configReader = new FileReader(file);
 
         ApiClient client = ClientBuilder
