@@ -15,7 +15,7 @@ public class KubernetesManagingServiceImpl implements KubernetesManagingService 
     @SneakyThrows
     @Override
     public List<Node> getPodList() {
-        KubernetesClient client = new DefaultKubernetesClient("http://192.168.12.87:6443");
+        KubernetesClient client = new DefaultKubernetesClient("https://192.168.12.87:6443");
 
         return client.nodes().list().getItems();
     }
