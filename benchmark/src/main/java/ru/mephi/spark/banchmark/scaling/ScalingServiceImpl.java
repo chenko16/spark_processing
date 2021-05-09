@@ -1,12 +1,11 @@
 package ru.mephi.spark.banchmark.scaling;
 
-import io.kubernetes.client.openapi.models.V1Pod;
+import io.fabric8.kubernetes.api.model.Node;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.mephi.spark.banchmark.cache.CacheService;
 import ru.mephi.spark.banchmark.kubernates.KubernetesManagingService;
 
@@ -40,7 +39,7 @@ public class ScalingServiceImpl implements ScalingService {
 //        Integer count = restTemplate.getForEntity(uriString, Integer.class)
 //                .getBody();
 
-        List<V1Pod> pods = kubernetesManagingService.getPodList();
+        List<Node> pods = kubernetesManagingService.getPodList();
 
         System.out.println(pods.size());
     }

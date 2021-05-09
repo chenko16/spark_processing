@@ -1,11 +1,11 @@
 package ru.mephi.spark.banchmark.kubernates;
 
-import io.kubernetes.client.openapi.models.V1Pod;
+import io.fabric8.kubernetes.api.model.Node;
 
 import java.util.List;
 
 public interface KubernetesManagingService {
 
-    List<V1Pod> getPodList();
+    List<Node> getPodList();
 
 }
