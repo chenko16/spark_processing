@@ -5,14 +5,16 @@ import ru.mephi.spark.banchmark.dto.MetricDto;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class CacheServiceImpl implements CacheService {
 
     private Map<Long, Map<Date, Date>> sourceMap = new ConcurrentHashMap<>();
     private Map<Long, Map<Date, Date>> resultMap = new ConcurrentHashMap<>();
-    private Map<LatencyKey, Long> latencyMap;
+    private Map<LatencyKey, Long> latencyMap = new ConcurrentHashMap<>();
 
     @Override
     public void addSourceValue(MetricDto metric) {
@@ -65,20 +67,25 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public Long getAverageLatency(Long id, Date time) {
+    public Long getAverageLatency() {
         Integer order = 0;
         Long latency = null;
         long sum = 0L;
         int count = 0;
 
-        do {
-            LatencyKey key = new LatencyKey(id, time, order);
-            latency = latencyMap.get(key);
-            if(latency != null) {
-                sum += latency;
-                count++;
-            }
-        } while (latency != null);
+        Set<LatencyKey> keySet = latencyMap.keySet().stream()
+                .filter(key -> key.getOrder().equals(order))
+                .collect(Collectors.toSet());
+
+        for(LatencyKey key: keySet) {
+            do {
+                latency = latencyMap.get(key);
+                if(latency != null) {
+                    sum += latency;
+                    count++;
+                }
+            } while (latency != null);
+        }
 
         return count != 0 ? sum / count : 0;
     }

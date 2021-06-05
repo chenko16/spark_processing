@@ -48,6 +48,7 @@ public class RddScheduler {
         aggregateMetrics();
     }
 
+    @Scheduled(fixedRate = 10)
     private void aggregateMetrics() {
         Calendar date = Calendar.getInstance();
         Date windowStart = DateUtil.getWindowStartMinutes(date, windowLength);
@@ -61,17 +62,7 @@ public class RddScheduler {
 
         JavaRDD<MetricDto> aggregatedMetrics = metricRdd
                 .map(metric -> {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(metric.getTime());
-
-                    int unroundedMinutes = calendar.get(Calendar.MINUTE);
-                    int mod = unroundedMinutes % 5;
-                    calendar.set(Calendar.SECOND, 0);
-                    calendar.set(Calendar.MILLISECOND, 0);
-                    calendar.set(Calendar.MINUTE, unroundedMinutes - mod);
-                    Date result = calendar.getTime();
-
-                    metric.setTime(result);
+                    metric.setTime(DateUtil.roundMinutes(metric.getTime(), windowUpdatePeriod));
                     return metric;
                 })
                 .mapToPair(metric -> new Tuple2<>(new Tuple2<>(metric.getId(), metric.getTime()),

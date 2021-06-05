@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface KubernetesManagingService {
 
-    List<Node> getPodList();
+    void deployApplication(int nodeNumber);
 
 }

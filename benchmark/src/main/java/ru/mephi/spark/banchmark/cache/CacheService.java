@@ -10,6 +10,6 @@ public interface CacheService {
     void addResultValue(MetricDto metric);
     Long checkLatency(Long id, Date time);
     void addLatencyValue(Long id, Date time);
-    Long getAverageLatency(Long id, Date time);
+    Long getAverageLatency();
 
 }

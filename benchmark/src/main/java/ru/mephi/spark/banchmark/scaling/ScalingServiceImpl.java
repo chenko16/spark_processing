@@ -1,46 +1,37 @@
 package ru.mephi.spark.banchmark.scaling;
 
-import io.fabric8.kubernetes.api.model.Node;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.mephi.spark.banchmark.cache.CacheService;
 import ru.mephi.spark.banchmark.kubernates.KubernetesManagingService;
 
-import java.util.List;
-
 @Service
 @EnableScheduling
+@RequiredArgsConstructor
 public class ScalingServiceImpl implements ScalingService {
 
     private final CacheService cacheService;
     private final KubernetesManagingService kubernetesManagingService;
     private final RestTemplate restTemplate;
-    private final String url;
-
-    private final String SCHEMA = "http://%s:%d/calculate";
-
-    public ScalingServiceImpl(CacheService cacheService, KubernetesManagingService kubernetesManagingService, RestTemplateBuilder restTemplateBuilder, ScalingServiceProperties properties) {
-        this.cacheService = cacheService;
-        this.kubernetesManagingService = kubernetesManagingService;
-        this.restTemplate = restTemplateBuilder.build();
-        this.url = String.format(SCHEMA, properties.getHost(), properties.getPort());
-    }
+    @Value("${calculation.url}") private final String url;
 
     @Override
-    @Scheduled(fixedRate = 60 * 1000)
+//    @Scheduled(fixedRate = 60 * 1000)
     public void scaleCluster() {
-//        String uriString = UriComponentsBuilder.fromHttpUrl(url)
-//                .queryParam("latency", 1000)
-//                .toUriString();
-//
-//        Integer count = restTemplate.getForEntity(uriString, Integer.class)
-//                .getBody();
+        Long averageLatency = cacheService.getAverageLatency();
 
-        List<Node> pods = kubernetesManagingService.getPodList();
+        String uriString = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("latency", 1000)
+                .toUriString();
 
-        System.out.println(pods.size());
+        Integer count = restTemplate.getForEntity(uriString, Integer.class)
+                .getBody();
+
+        kubernetesManagingService.deployApplication(count);
     }
 }
